@@ -1,0 +1,6 @@
+$subipfire->{'70.iptraffic'} = {
+        'caption' => $Lang::tr{'IPTraffic'},
+        'uri' => '/cgi-bin/iptraffic.cgi',
+        'title' => $Lang::tr{'IPTraffic'},
+        'enabled' => 1,
+};

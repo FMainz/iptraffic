@@ -1,0 +1,210 @@
+#!/bin/bash
+# ipcop addon installer for IPfire
+#
+# created 01 January 2005 by Frank 'Darkmann' Koch <darkmann@black-empire.de>
+# modified 02 January 2005 by Tom 'wintermute' Eichstaedt <wintermute@tom-e.de>
+#
+# extended 2006-02-24 by weizen_42
+# even more modifications 2009-2011 by weizen_42
+# more modifications 2014/2015 by RadioCarbon
+# ported for IPFire 2020 by RadioCarbon
+#
+#####################################################################################################
+#
+# IPTraffic Addon for IPFire v2.x, 2020 by Frank Mainz (RadioCarbon)
+#
+# Mail : ipfire@cybermainzel.de
+# URL  : http://www.cybermainzel.de
+#
+# Version : v0.2
+# Date    : December 01, 2020
+#
+#####################################################################################################
+
+
+CMD="$1"
+
+path=`pwd`
+addonname=iptraffic
+addon=/var/ipfire/$addonname
+cgi=/srv/web/ipfire/cgi-bin
+html=/srv/web/ipfire/html
+images=$html/images/$addonname
+graphs=$html/graphs/$addonname
+rrd=/var/log/rrd/$addonname
+cron=/etc/fcron.minutely/$addonname
+log=/var/log/$addonname
+pics=(addblue.gif addfaint.gif addgray.gif addgreen.gif addorange.gif addred.gif blue.png graph.png gray.png green.png orange.png red.png)
+#
+RED="\\033[01;31m"
+GREEN="\\033[01;32m"
+BLUE="\\033[1;34m"
+GREY="\\033[0m"
+
+#error handling
+err()
+{
+    echo " "
+    echo "Error : $1 "
+    echo " "
+    echo "Choose your option:"
+    echo " "
+    echo "./install -i   ---> to install"
+    echo "./install -u   ---> to uninstall"
+    echo " "
+    exit
+}
+
+# installation
+ai()
+{
+    ## verify already installed or uninstall
+    if [ -e $cgi/iptraffic.cgi ]; then
+        echo "Upgrading"
+        au
+    fi
+
+    echo "Copying images"
+    mkdir -p $images
+    chown -R nobody:nobody $images
+    for wert in "${pics[@]}"
+        do
+        cp -p $path/$addonname/$wert  $images/$wert
+        chmod 644        $images/$wert
+    done
+
+    echo "Create graphs dir"
+    mkdir -p $graphs
+    chown -R nobody:nobody $graphs
+
+    echo "Copying Addon-files"
+    mkdir -p $addon
+    chown nobody:nobody $addon
+    cp -p iptraffic.pl    $addon/iptraffic.pl
+    chown root.root       $addon/iptraffic.pl
+    chmod 755             $addon/iptraffic.pl
+
+    if [ ! -d $log ]; then
+        mkdir -p $log
+    fi
+
+    if [ ! -e $log/iptraffic.db ]; then
+        touch $log/iptraffic.db
+    fi
+    chown -R nobody:nobody $log
+
+    if [ ! -d $rrd ]; then
+        mkdir -p $rrd
+        chown nobody:nobody $rrd
+    fi
+
+    # supported languages
+    echo "Adding language texts"
+    addtolanguage IPTraffic en,de lang
+
+    echo "Add CGI"
+$subipfire->{'70.iptraffic'} = {
+        'caption' => $Lang::tr{'IPTraffic'},
+        'uri' => '/cgi-bin/iptraffic.cgi',
+        'title' => $Lang::tr{'IPTraffic'},
+        'enabled' => 1,
+};
+
+    # run iptraffic.pl every 5 mins
+    echo "Adding cron job"
+    if [ ! -d $cron ]; then
+        mkdir -p $cron
+        chown nobody:nobody $cron
+    fi
+}
+
+# update
+au()
+{
+    if [ ! -e $cgi/iptraffic.cgi ]; then
+        echo "IPTraffic addon is not installed !"
+        exit
+    fi
+
+    echo "Remove CGI"
+    removecgi iptraffic.cgi
+    rm -r $images
+    rm -r $graphs
+    rm -r $addon
+    rm -r $log
+    rm -r $rrd
+
+    # remove cron job
+    echo "Removing cron job"
+    removefromfile IPTraffic $cron
+
+    # remove languages
+    echo "Removing language texts"
+    removefromlanguage IPTraffic
+
+    dbtest=`sqlite3 /var/log/iptraffic/iptraffic.db .fullschema | grep port`
+    if [ -z "$dbtest" ]; then
+        sqlite3 /var/log/iptraffic/iptraffic.db "ALTER TABLE 'IPTraffic' ADD port INT UNSIGNED;"
+    fi
+
+}
+
+# deinstallation
+ar()
+{
+    if [ ! -e $cgi/iptraffic.cgi ]; then
+        echo "IPTraffic addon is not installed !"
+        exit
+    fi
+
+    echo "Remove CGI"
+    removecgi iptraffic.cgi
+    rm -r $images
+    rm -r $graphs
+    rm -r $addon
+    rm -r $log
+    rm -r $rrd
+
+    # remove cron job
+    echo "Removing cron job"
+    removefromfile IPTraffic $cron
+
+    # remove languages
+    echo "Removing language texts"
+    removefromlanguage IPTraffic
+
+    # remove rules
+    echo "Removing IPTraffic rules"
+    number=iptables -L INPUT --line-numbers | grep CUSTOMINPUT | awk '{print $1}'
+    iptables -D INPUT $number
+    number=iptables -L OUTPUT --line-numbers | grep CUSTOMOUTPUT | awk '{print $1}'
+    iptables -D OUTPUT $number
+    number=iptables -L FORWARD --line-numbers | grep CUSTOMFORWARD | awk '{print $1}'
+    iptables -D FORWARD $number
+}
+
+case $CMD in
+    -i|i|install)
+        echo " "
+        echo "Installing now ..."
+        ai
+        echo "Successfully done!"
+        echo " ";;
+
+    -u|u|uninstall)
+        echo " "
+        echo "Deinstalling addon now ..."
+        ar
+
+        # reinstall fcrontab
+        fcrontab -z
+
+        rm -rf /var/ipcop/addons/iptraffic
+        echo "Successfully done!"
+        echo " ";;
+
+    *)
+        err "Invalid Option";;
+esac
+sync
+#end of file

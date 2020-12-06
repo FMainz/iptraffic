@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# Script to update IPTraffic
+#
+
+CRON=5
+MINUTE=`date +%M`
+
+if [ $(($MINUTE%$CRON)) == 0 ]; then
+	/var/ipfire/iptraffic/iptraffic.pl > /dev/null
+fi
