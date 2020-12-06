@@ -1,23 +1,21 @@
 #!/usr/bin/perl
 #
-# This file is AddOn of the IPCop Firewall.
+# This file is AddOn of the IPFire Firewall.
 #
-# IPCop is free software; you can redistribute it and/or modify
+# IPFire is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# IPCop is distributed in the hope that it will be useful,
+# IPFire is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with IPCop.  If not, see <http://www.gnu.org/licenses/>.
+# along with IPFire.  If not, see <http://www.gnu.org/licenses/>.
 #
-# (c) 2008-2014, the IPCop team
-#
-# $Id: iptraffic.pl, v0.6 2015-12-29 15:49:00 RadioCarbon $
+# $Id: iptraffic.pl, v0.8 2020-12-06 23:49:00 RadioCarbon $
 #
 
 use strict;
