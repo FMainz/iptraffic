@@ -1,2 +1,2 @@
 # iptraffic
-AddOn for IPFire count traffic of IP-Adresse
+AddOn for IPFire counts traffic from IP addresses
