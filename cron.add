@@ -1,0 +1,2 @@
+# Update IPTraffic
+*/5 * * * *	/var/ipfire/iptraffic/iptraffic.pl > /dev/null

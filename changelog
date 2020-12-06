@@ -1,0 +1,37 @@
+changelog
+v.0.8
+	erste Portierung für IPFire
+v.0.7
+	IPs an roter Schnittstelle aus arp-Liste gefiltert
+
+v0.6
+	Überarbeitung der Datenerfassung, um tägliche Neustarts zu berücksichtigen.
+	Fehler in der Beschriftung beseitigt
+	weitere Sortiermöglichkeiten in der GUI hinzugefügt
+	Reduzierung der SQL-Abfragen -> schnellerer Seitenaufbau
+
+v0.5
+	Fehler in der Auswertung bei >50GB/Tag beseitigt (Besonderer Dank an Wolle für die Geduld bei der Fehlersuche und den Tests)
+	Beschleunigung des Scripts durch Codeoptimierung
+	Fehler in der Chain-Regel beseitigt (Hatte sich über "geschlossen"-Regel hinweggesetzt)
+	Installer überarbeitet
+	Eintrag für rc.event.local hinzugefügt
+
+v0.4
+	Zugriff auf Datenbank optimiert
+	Beschleunigung des Einfügen und Entfernen von Client-IPs in die Liste
+	Rechenfehler beseitigt
+	Fehler in der Darstellung beseitigt
+
+v0.3
+	Werte in SQLite-Datenbank speichern
+	GUI mit Sortiermöglichkeit versehen
+	Farbliche Hervorhebung von Online-Clients
+
+v0.2
+	Traffic aus FORWARD mit einbezogen
+	Wieder herstellen der Trafficermittlung nach Neustart (Rückmeldung erwünscht)
+	Installer überarbeitet
+
+v0.1
+	Erste Version
