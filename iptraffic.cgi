@@ -22,7 +22,7 @@
 #
 # This file is AddOn of the IPFire Firewall base on IPCop-Addon IPTraffic
 #
-# $Id: iptraffic.cgi, v0.7 2020-11-29 23:27:00 RadioCarbon $
+# $Id: iptraffic.cgi, v0.8 2020-12-05 23:27:00 RadioCarbon $
 #
 
 # Add entry in menu
